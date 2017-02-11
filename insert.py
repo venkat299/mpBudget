@@ -5,8 +5,10 @@ import configparser
 import os
 import sys
 import sqlite3
+import my_connection as connection
 
 DB_URL = None
+global conn
 conn = None
 sheet = None
 
@@ -14,18 +16,7 @@ desg_ls=None
 unit_ls=None
 sect_ls=None
 
-def read_config():
-	# instantiate
-	config = configparser.ConfigParser()
-	config.read('./config.cfg')
-	global DB_URL 
-	DB_URL = os.path.abspath(config['DB'].get('url'))
-	global conn 
-	conn = sqlite3.connect('./../../../work/MPB_17_18/mpb_17-18.db')
-
-
 def load_tables():
-	print(DB_URL)
 	# conn.row_factory = sqlite3.Row
 	c = conn.cursor()
 	c.execute("select dscd from desg")
@@ -44,6 +35,8 @@ def load_tables():
 	global eis_ls
 	eis_ls = [ x[0] for x in c.fetchall()]
 
+eis_list = []
+
 def validate_row(row):
 	err = []
 	if row['DSCD'] not in desg_ls:
@@ -54,9 +47,16 @@ def validate_row(row):
 		err.append(" unit("+row['WORKING UNIT']+")")
 	if row['ONROLL_UNIT'] not in unit_ls:
 		err.append(" roll_unit("+row['ONROLL_UNIT']+")")
-	if int(row['EIS']) in eis_ls:
-		err.append(" eis_dup("+str(row['EIS'])+")")
 
+	global eis_list
+
+	if row['EIS'] in eis_list:
+		err.append(" eis_repeat("+str(row['EIS'])+")")
+	else:
+		eis_list.append(row['EIS'])
+
+	if int(row['EIS']) in eis_ls:
+		err.append(" eis_dup_db("+str(row['EIS'])+")")
 
 	if not err:
 		return None
@@ -86,14 +86,17 @@ def read_file(xls_path, sheet_name, upload):
 
 	records = sheet.get_records()
 	error_ls = []
+
 	for idx, record in enumerate(records):
 		err_row = validate_row(record)
+
 		if err_row:
 			error_ls.append(err_row)
 			print('ERR @ ROW {} => {}'.format(idx+2,validate_row(record)))
 	if error_ls:
 		print('correct the above error and upload')
 	else:
+		print('{0} rows will be inserted. add "-u" to upload'.format(len(records)))
 		if upload:
 			ls=[]
 			for idx, r in enumerate(records):
@@ -118,7 +121,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     print(args)
-    read_config()
+    #read_config()
+    conn = connection.get_connection()
 
     if args.table == 'e':
         load_tables()

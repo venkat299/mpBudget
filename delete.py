@@ -6,22 +6,16 @@ import os
 import sys
 import sqlite3
 
+import my_connection as connection
+
 DB_URL = None
+global conn
 conn = None
 sheet = None
 
 desg_ls=None
 unit_ls=None
 sect_ls=None
-
-def read_config():
-	# instantiate
-	config = configparser.ConfigParser()
-	config.read('./config.cfg')
-	global DB_URL 
-	DB_URL = os.path.abspath(config['DB'].get('url'))
-	global conn 
-	conn = sqlite3.connect('./../../../work/MPB_17_18/mpb_17-18.db')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -35,7 +29,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     print(args)
-    read_config()
+    #read_config()
+    conn = connection.get_connection()
 
     if args.table == 'e':
         if args.column == 'r':
