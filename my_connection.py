@@ -4,12 +4,12 @@ import sys
 
 def get_connection():
 	# instantiate
-	config = configparser.ConfigParser()
-	config.read('./config.cfg')
-	global DB_URL 
-	#DB_URL = os.path.abspath(config['DB'].get('url'))
-	DB_URL = config['DB'].get('url')
-	print('DB_URL:"{0}"'.format(DB_URL))
+	# config = configparser.ConfigParser()
+	# config.read('./config.cfg')
+	# global DB_URL 
+	# #DB_URL = os.path.abspath(config['DB'].get('url'))
+	# DB_URL = config['DB'].get('url')
+	# print('DB_URL:"{0}"'.format(DB_URL))
 	global conn 
 
 	##### Enter relative db location here #####
