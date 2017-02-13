@@ -55,9 +55,12 @@ def validate_row(row):
 	else:
 		eis_list.append(row['EIS'])
 
-	if int(row['EIS']) in eis_ls:
-		err.append(" eis_dup_db("+str(row['EIS'])+")")
-
+	try:
+		if int(row['EIS']) in eis_ls:
+			err.append(" eis_dup_db("+str(row['EIS'])+")")
+	except ValueError as e:
+		err.append(" eis_err("+str(row['EIS'])+")")
+		
 	if not err:
 		return None
 	else:
