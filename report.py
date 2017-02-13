@@ -39,10 +39,10 @@ if __name__ == '__main__':
     rows = c.fetchall()
     count = len(rows)
     ext, req, san, MNOVM, MNSPA, SVR_NO_C_GR = 0,0,0,0,0,0
+    print('{}	{}	{}			{}	{}	{}	{}	{}		{}'.format('area','unit','name','ext','req','san','MNOVM','MNSPA','SVR_NO_C_GR'))
+    print('{}	{}	{}			{}	{}	{}	{}	{}		{}'.format('====','====','====','===','===','===','=====','=====','==========='))
     for x in rows:
-        print('{}	{}	{}			{}	{}	{}	{}	{}		{}'.format('area','unit','name','ext','req','san','MNOVM','MNSPA','SVR_NO_C_GR'))
-        print('{}	{}	{}			{}	{}	{}	{}	{}		{}'.format('====','====','====','===','===','===','=====','=====','==========='))
-        print('{}	{}	{}		{}	{}	{}	{}	{}		{}'.format(x['ac'],x['unit'],x['name'],x['ext'],x['req'],x['san'],x['MNOVM'],x['MNSPA'],x['SVR_NO_C_GR']))
+        print('{}	{}	{}			{}	{}	{}	{}	{}		{}'.format(x['ac'],x['unit'],x['name'],x['ext'],x['req'],x['san'],x['MNOVM'],x['MNSPA'],x['SVR_NO_C_GR']))
         ext = ext + (x['ext'] or 0)
         req = req + (x['req'] or 0)
         san = san + (x['san'] or 0)

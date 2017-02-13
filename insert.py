@@ -104,7 +104,7 @@ def read_file(xls_path, sheet_name, upload):
 			ls=[]
 			for idx, r in enumerate(records):
 				#sno	AREA	UNIT	MINE_TYPE	ONROLL_UNIT	WORKING UNIT	SECTION_TYPE	CADRE	SECTION	SECTION_CD	DESIG	DSCD	EIS	NAME	GENDER	DOB	Comments
-				ls.append(('N','W',None,r['SECTION_CD'],r['WORKING UNIT'],r['ONROLL_UNIT'],r['DESIG'],r['GENDER'],r['DOB'],r['NAME'],r['EIS'],r['Comments']))
+				ls.append(('N','W',None,r['SECTION_CD'],r['WORKING UNIT'],r['ONROLL_UNIT'],r['DESIG'],r['GENDER'],r['DOB'],r['NAME'],r['EIS'],r['COMMENTS']))
 			c = conn.cursor()
 			c.executemany('''insert into employee (emp_type,working,o_dcd,sect,ucde,roll_ucde,desg,gend,dob,name,eis,comments)
 				values(?,?,?,?,?,  ?,?,?,?,?, ?,?)''',ls)
