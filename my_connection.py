@@ -13,7 +13,7 @@ def get_connection():
 	global conn 
 
 	##### Enter relative db location here #####
-	conn = sqlite3.connect('./../../../work/MPB_17_18/mpb_17-18.db')
+	conn = sqlite3.connect('./mpb_17-18.db')
 
 
 	conn.row_factory = sqlite3.Row

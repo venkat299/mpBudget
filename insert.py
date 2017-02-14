@@ -50,10 +50,10 @@ def validate_row(row):
 
 	global eis_list
 
-	if row['EIS'] in eis_list:
+	if str(row['EIS']) in eis_list:
 		err.append(" eis_repeat("+str(row['EIS'])+")")
 	else:
-		eis_list.append(row['EIS'])
+		eis_list.append(str(row['EIS']))
 
 	try:
 		if int(row['EIS']) in eis_ls:
@@ -104,7 +104,7 @@ def read_file(xls_path, sheet_name, upload):
 			ls=[]
 			for idx, r in enumerate(records):
 				#sno	AREA	UNIT	MINE_TYPE	ONROLL_UNIT	WORKING UNIT	SECTION_TYPE	CADRE	SECTION	SECTION_CD	DESIG	DSCD	EIS	NAME	GENDER	DOB	Comments
-				ls.append(('N','W',None,r['SECTION_CD'],r['WORKING UNIT'],r['ONROLL_UNIT'],r['DESIG'],r['GENDER'],r['DOB'],r['NAME'],r['EIS'],r['COMMENTS']))
+				ls.append(('N','W',None,r['SECTION_CD'],r['WORKING UNIT'],r['ONROLL_UNIT'],r['DESIG'],r['GENDER'],r['DOB'],r['NAME'],r['EIS'],r['Comments']))
 			c = conn.cursor()
 			c.executemany('''insert into employee (emp_type,working,o_dcd,sect,ucde,roll_ucde,desg,gend,dob,name,eis,comments)
 				values(?,?,?,?,?,  ?,?,?,?,?, ?,?)''',ls)

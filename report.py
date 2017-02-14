@@ -42,6 +42,8 @@ if __name__ == '__main__':
     print('{}	{}	{}			{}	{}	{}	{}	{}		{}'.format('area','unit','name','ext','req','san','MNOVM','MNSPA','SVR_NO_C_GR'))
     print('{}	{}	{}			{}	{}	{}	{}	{}		{}'.format('====','====','====','===','===','===','=====','=====','==========='))
     for x in rows:
+        #print (x.keys())
+        #['ac', 'unit', 'name', 'working_unit', 'ext', 'req', 'san', 'MNOVM', 'MNSPA', 'SVR_NO_C_GR']
         print('{}	{}	{}			{}	{}	{}	{}	{}		{}'.format(x['ac'],x['unit'],x['name'],x['ext'],x['req'],x['san'],x['MNOVM'],x['MNSPA'],x['SVR_NO_C_GR']))
         ext = ext + (x['ext'] or 0)
         req = req + (x['req'] or 0)
