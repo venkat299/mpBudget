@@ -115,9 +115,9 @@ def read_file(xls_path, sheet_name, upload, ignore_multi_unit):
 
 		if err_row:
 			error_ls.append(err_row)
-			print('ERR @ ROW {} => {}'.format(idx+2,validate_row(record, ignore_multi_unit)))
+			print('ERR @ ROW {} => {}'.format(idx+2, err_row))
 	if error_ls:
-		print('correct the above error and upload')
+		print('correct the above errors and upload')
 	else:
 		print('{0} rows will be inserted. add "-u" to upload'.format(len(records)))
 		if upload:
