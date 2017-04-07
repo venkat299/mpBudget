@@ -4,7 +4,8 @@ import configparser
 import os
 import sys
 import sqlite3
-import my_connection as connection
+import my_connection_grp_desg as connection
+import functools 
 
 # DB_URL = None
 conn = connection.get_connection()
@@ -19,7 +20,7 @@ sect_ls=None
 def load_tables():
 	# conn.row_factory = sqlite3.Row
 	c = conn.cursor()
-	c.execute("select dscd from desg")
+	c.execute("select code as dscd from gdscd")
 	global desg_ls
 	desg_ls = [ x[0] for x in c.fetchall()]
 
@@ -40,7 +41,7 @@ desg_dup_ls = []
 def validate_row(row):
 	err = []
 	if row['DSCD'] not in desg_ls:
-		err.append(" dscd("+row['DSCD']+")")
+		err.append(" wrong_dscd("+row['DSCD']+")")
 	# if row['SECTION_CD'] not in sect_ls:
 	# 	err.append(" sect("+row['SECTION_CD']+")")
 	# if row['WORKING UNIT'] not in unit_ls:
@@ -50,10 +51,10 @@ def validate_row(row):
 
 	global desg_dup_ls
 
-	if str(row['DSCD']) in desg_dup_ls:
-		err.append(" DSCD_repeat("+str(row['DSCD'])+")")
+	if str(row['DSCD']+'_'+row['UNIT']) in desg_dup_ls:
+		err.append(" DSCD_repeat("+str(row['DSCD']+'_'+row['UNIT'])+")")
 	else:
-		desg_dup_ls.append(str(row['DSCD']))
+		desg_dup_ls.append(str(row['DSCD']+'_'+row['UNIT']))
 
 	# try:
 	# 	if int(row['EIS']) in eis_ls:
@@ -67,7 +68,7 @@ def validate_row(row):
 		return err
 
 def filter_records(row):
-	if row['DSCD'] in desg_ls or (len(row['DSCD'])==7 and row['DSCD'] not in sect_ls):
+	if (row['DSCD'] in desg_ls or (len(row['DSCD'])==5 ) and row['UNIT'] in unit_ls):
 		return True
 
 def sum_acc_tot(result, row):
@@ -77,7 +78,12 @@ def sum_acc_req(result, row):
 	return result+row['AREA REQT 17-18']
 
 def sum_acc_sanc(result, row):
-	return result+row['SANC 17-18']
+	#sanc = 0 if len(row['2017'])==0 else int(row['2017'])
+	try:
+		return result+int(row['2017'])
+	except ValueError:
+		return result+0
+	
 
 
 def read_file(xls_path, sheet_name, upload):
@@ -105,9 +111,11 @@ def read_file(xls_path, sheet_name, upload):
 
 	records = sheet.get_records()
 	error_ls = []
+	filtered_rec = []
 
 	for idx, record in enumerate(records):
 		if filter_records(record):
+			filtered_rec.append(record)
 			err_row = validate_row(record)
 			#print(record)
 
@@ -115,23 +123,24 @@ def read_file(xls_path, sheet_name, upload):
 				error_ls.append(err_row)
 				print('ERR @ ROW {} => {}'.format(idx+2,validate_row(record)))
 
-	sum_tot = reduce(sum_acc_tot,records,initializer=0)
-
-	print("Ext total: {0}".format(sum_tot))
 
 	if error_ls:
 		print('correct the above error and upload')
 	else:
-		print('{0} rows will be inserted. add "-u" to upload'.format(len(records)))
+
+		sum_tot = functools.reduce(sum_acc_sanc,filtered_rec,0)
+		print("SANC total: {0}".format(sum_tot))
+
+		print('{0} rows will be inserted. add "-u" to upload'.format(len(filtered_rec)))
 		if upload:
 			ls=[]
-			for idx, r in enumerate(records):
+			for idx, r in enumerate(filtered_rec):
 				#sno	AREA	UNIT	MINE_TYPE	ONROLL_UNIT	WORKING UNIT	SECTION_TYPE	CADRE	SECTION	SECTION_CD	DESIG	DSCD	EIS	NAME	GENDER	DOB	Comments
-				ls.append(('N','W',None,r['SECTION_CD'],r['WORKING UNIT'],r['ONROLL_UNIT'],r['DSCD'],r['GENDER'],r['DOB'],r['NAME'],r['EIS'],r['Comments']))
-			# c = conn.cursor()
-			# c.executemany('''insert into employee (emp_type,working,o_dcd,sect,ucde,roll_ucde,desg,gend,dob,name,eis,comments)
-			# 	values(?,?,?,?,?,  ?,?,?,?,?, ?,?)''',ls)
-			#conn.commit()
+				# unit, dscd5, sanc, req, year
+				ls.append((r['UNIT'],r['DSCD'],r['2017'],0,'2017'))
+			c = conn.cursor()
+			c.executemany('''insert into grp_sanc (unit, dscd5, sanc, req, year) values(?,?,?,?,?)''',ls)
+			conn.commit()
 			print('--->{0} records inserted sucessfully'.format(len(ls)))
 
 

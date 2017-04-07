@@ -5,9 +5,9 @@ import configparser
 import os
 import sys
 import sqlite3
-import my_connection as connection
+import my_connection_grp_desg as connection
 
-from insert import sanction as insert_sanc
+from insert import sanction_grp as insert_sanc
 
 DB_URL = None
 global conn
@@ -148,10 +148,7 @@ if __name__ == '__main__':
     #read_config()
     conn = connection.get_connection()
 
-    if args.table == 'e':
-        load_tables()
-        read_file(args.filename, args.sheetname, args.upload, args.ignore_multi_unit)
-    elif args.table == 's':
+    if args.table == 's':
         insert_sanc.load_tables()
         insert_sanc.read_file(args.filename, args.sheetname, args.upload)
     else:
