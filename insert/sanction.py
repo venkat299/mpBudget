@@ -157,6 +157,8 @@ def read_file(xls_path, sheet_name, upload):
 				ls.append((unit_code, r['DSCD'],r['AREA REQT 17-18'],r['SANC 17-18'],r['COMMENTS, IF ANY']))
 			c = conn.cursor()
 			#print(ls)
+			c.execute('delete from sanc where unit = ?',(unit_code,))
+			print('deleting rows for unit : {0}'.format(unit_code))
 			c.executemany('''insert into sanc (unit, dscd, req, san, remark) values(?,?,?,?,?)''',ls)
 			conn.commit()
 			print('--->{0} records inserted sucessfully'.format(len(ls)))
