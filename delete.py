@@ -32,12 +32,30 @@ if __name__ == '__main__':
     #read_config()
     conn = connection.get_connection()
 
+    if args.table == 's':
+        if args.column == 'w':
+            c = conn.cursor()
+            c.execute('select count(*) from sanc where unit like ?',('%'+args.value+'%',))
+            row_count = c.fetchone()
+            c.execute('select cast(sum(req) as int) from sanc where unit like ?',('%'+args.value+'%',))
+            req= c.fetchone()
+            c.execute('select cast(sum(san) as int) from sanc where unit like ?',('%'+args.value+'%',))
+            san= c.fetchone()
+            print('{0} rows will be deleted'.format(row_count[0]))
+            print('req = {0}; sanc ={1}; '.format(req[0],san[0]))
+            print('enter -d to confirm delete')
+            if args.delete:
+                c.execute('delete from sanc where unit like ?',('%'+args.value+'%',))
+                conn.commit()
+                print('----> {0} rows deleted'.format(row_count[0]))
+
     if args.table == 'e':
         if args.column == 'r':
             c = conn.cursor()
             c.execute('select count(*) from employee where roll_ucde like ?',('%'+args.value+'%',))
             row_count = c.fetchone()
             print('{0} rows will be deleted'.format(row_count[0]))
+            print('enter -d to confirm delete')
             if args.delete:
                 c.execute('delete from employee where roll_ucde like ?',('%'+args.value+'%',))
                 conn.commit()
@@ -47,6 +65,7 @@ if __name__ == '__main__':
             c.execute('select count(*) from employee where ucde like ?',('%'+args.value+'%',))
             row_count = c.fetchone()
             print('{0} rows will be deleted'.format(row_count[0]))
+            print('enter -d to confirm delete')
             if args.delete:
                 c.execute('delete from employee where ucde like ?',('%'+args.value+'%',))
                 conn.commit()

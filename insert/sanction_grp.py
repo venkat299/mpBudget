@@ -68,8 +68,10 @@ def validate_row(row):
 		return err
 
 def filter_records(row):
-	if (row['DSCD'] in desg_ls or (len(row['DSCD'])==5 ) and row['UNIT'] in unit_ls):
+	if (row['DSCD'] in desg_ls or (len(row['DSCD'])==5 )) and (row['UNIT'] in unit_ls):
 		return True
+	else: 
+		return False
 
 def sum_acc_tot(result, row):
 	return result+row['TOT']
