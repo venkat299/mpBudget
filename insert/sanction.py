@@ -71,8 +71,8 @@ def validate_row(row):
 	else:
 		return err
 
-def filter_records(row):
-	if row['DSCD'] in desg_ls or ((len(row['DSCD'])==7 and row['DSCD'] not in discp_ls)and row['DSCD'] not in sect_ls):
+def filter_records(row, unit_code):
+	if row['DSCD'] in desg_ls or ((len(row['DSCD'])==7 and row['DSCD'] not in discp_ls)and row['DSCD'] not in sect_ls) or row['IDX']==unit_code+'_g':
 		return True
 	else:
 		return False
@@ -130,7 +130,7 @@ def read_file(xls_path, sheet_name, upload):
 	filtered_rec = []
 
 	for idx, record in enumerate(records):
-		if filter_records(record):
+		if filter_records(record, unit_code):
 			filtered_rec.append(record)
 			err_row = validate_row(record)
 			#print(record)
@@ -154,7 +154,7 @@ def read_file(xls_path, sheet_name, upload):
 			for idx, r in enumerate(filtered_rec):
 				# unit, dscd, req, sanc remark
 				#sno	AREA	UNIT	MINE_TYPE	ONROLL_UNIT	WORKING UNIT	SECTION_TYPE	CADRE	SECTION	SECTION_CD	DESIG	DSCD	EIS	NAME	GENDER	DOB	Comments
-				ls.append((unit_code, r['DSCD'],r['AREA REQT 17-18'],r['SANC 17-18'],r['COMMENTS, IF ANY']))
+				ls.append((unit_code, r['DSCD'],r['AREA REQT 18-19'],r['SANC'],r['COMMENTS, IF ANY']))
 			c = conn.cursor()
 			#print(ls)
 			c.execute('delete from sanc where unit = ?',(unit_code,))

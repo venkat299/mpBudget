@@ -155,7 +155,7 @@ if __name__ == '__main__':
         insert_sanc.load_tables()
         insert_sanc.read_file(args.filename, args.sheetname, args.upload)
     else:
-    	print('supplied argument  or order of argument is wrong')
+    	print('supplied argument is wrong or the order of argument is wrong')
     	sys.exit()
 
   

@@ -43,7 +43,7 @@ if __name__ == '__main__':
     # read from child db
     ##	read and mask employee data
     ##  read sanc data
-    c_c.execute('select eis+? as mod_eis, name,dob,gend,desg,slu,roll_ucde,ucde,sect,o_dcd,working,emp_type,eis_status,comments  from employee where substr(ucde,2,2)=? or substr(roll_ucde,2,2)=?',(area_id*100000000,area_cd,area_cd))
+    c_c.execute('select eis+? as mod_eis, name,dob,gend,desg,slu,roll_ucde,ucde,sect,o_dcd,working,emp_type,eis_status,comments  from employee where substr(ucde,2,2)=? or substr(roll_ucde,2,2)=?',((area_id*100000000),area_cd,area_cd))
     emp_ls = [ x for x in c_c.fetchall()]
 
     c_c.execute('select * from sanc where substr(unit,2,2)=?',(area_cd,))

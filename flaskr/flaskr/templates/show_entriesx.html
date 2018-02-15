@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+<!-- <link href="{{ url_for('static', filename='jtable/themes/metro/blue/jtable.min.css') }}" rel="stylesheet" type="text/css" />
+
+<link href="{{ url_for('static', filename='jtable/themes/metro/blue/jtable.min.css') }}" rel="stylesheet" type="text/css" />
+
+<link href="{{ url_for('static', filename='jtable/themes/metro/darkgray/jtable.css') }}" rel="stylesheet" type="text/css" />
+
+
+
+<script src="{{ url_for('static', filename='jquery/jquery-3.1.1.min.js') }}" type="text/javascript"></script>
+
+
+<script src="{{ url_for('static', filename='jtable/jquery.jtable.min.js') }}" type="text/javascript"></script>
+ -->
+
+
+{% block body %}
+ <link href="{{ url_for('static', filename='semantic/semantic.min.css') }}" rel="stylesheet" type="text/css" />
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='semantic/semantic.min.js') }}"></script>
+  {% if session.logged_in %}
+    <form action="{{ url_for('show_entries_filter') }}" method=post >
+      <dl>
+<div class="ui fluid focus action input">
+  <input type="text" name="filter" placeholder="Search..." value='{{ qfilter|safe }}'>
+  <button class="ui button" type=submit >Search</button>
+</div>
+        <!-- <dd><input type=submit value=Share> -->
+      </dl>
+    </form>
+  {% endif %}
+<table class="ui compact celled selectable striped table">
+  <thead>
+    <tr class="">
+      <th>Area</th>
+      <th>Type</th>
+      <th>Unit</th>
+      <th>Name</th>
+      <th>Discp</th>
+      <th>Dscd</th>
+      <th>desig</th>
+      <th>Grade</th>
+      <th>tot</th>
+      <th>Req</th>
+      <th>San</th>
+      <th>Remark</th>
+
+  </tr>
+{% for item in footer %}
+  <thead>
+    <tr><th>Count</th><th>{{item.count_record}}</th>
+    <th></th><th></th>
+    <th></th><th></th>
+    <th></th><th>Total: </th>
+    <th>{{item.sum_tot}}</th><th>{{item.sum_req}}</th>
+    <th>{{item.sum_san}}</th><th></th>
+  </tr></thead>
+{% endfor %}
+  </thead>
+  <tbody>
+    {% for entry in entries %}
+    <tr>
+    <td>{{ entry.area }}</td>
+    <td>{{ entry.type }}</td>
+    <td class="ui yellow">{{ entry.unit }}</td>
+    <td>{{ entry.name }}</td>
+    <td>{{ entry.discp }}</td>
+    <td>{{ entry.dscd }}</td>
+    <td>{{ entry.desig }}</td>
+    <td>{{ entry.grade }}</td>
+    <td>{{ entry.tot}}</td>
+    <td>{{ entry.req}}</td>
+    <td>{{ entry.san }}</td>
+    <td>{{ entry.remark|safe }}</td>
+  </tr>
+
+  {% else %}
+  {% if error %}
+  <li><em>{{error}}</em>
+  {% endif %}
+
+    <li><em>No entries here so far</em>
+  {% endfor %}
+    </tbody>
+  
+
+
+  </table>
+
+{% endblock %}

@@ -1,0 +1,7 @@
+click==6.7
+Flask==0.12.2
+-e git+https://github.com/venkat299/mpbudget.git@76fc8ad18ddd9c2549861d301aa484af6d3da2b6#egg=flaskr&subdirectory=flaskr
+itsdangerous==0.24
+Jinja2==2.10
+MarkupSafe==1.0
+Werkzeug==0.14.1
