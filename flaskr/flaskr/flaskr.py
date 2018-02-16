@@ -59,14 +59,51 @@ def close_db(error):
 
 
 @app.route('/')
-def show_entries():
+def show_desg_summ():
     db = get_db()
-    cur = db.execute(qs.get_sanc())
+    cur = db.execute(qs.get_desg_summ())
     # cur = db.execute('select title, text from entries order by id desc')
-    entries = cur.fetchall()
-    return render_template('show_entries.html', entries=entries)
+    # entries = cur.fetchall()
+    desg_json = get_as_json(cur)
+    cur = db.execute(qs.get_total_footer())
+    # cur = db.execute('select title, text from entries order by id desc')
+    footer = get_as_dict(cur)[0]
+    print(footer)
+    return render_template('desg_summ.html', entries=desg_json, footer=footer)
+
+@app.route('/area')
+def show_area_unit_summ():
+    db = get_db()
+    cur = db.execute(qs.get_area_unit_summ())
+    # cur = db.execute('select title, text from entries order by id desc')
+    # entries = cur.fetchall()
+    desg_json = get_as_json(cur)
+
+    
+    cur = db.execute(qs.get_total_footer())
+    # cur = db.execute('select title, text from entries order by id desc')
+    footer = get_as_dict(cur)[0]
+
+    return render_template('area_summ.html', entries=desg_json, footer=footer)
+
+
+@app.route('/desg_area',  methods=['POST'])
+def show_desg_area_summ():
+    db = get_db()
+    d5_val = '%'+request.form['d5']+'%'
+    print(d5_val)
+    cur = db.execute(qs.get_desg_area_unit_summ(),[d5_val,])
+    # cur = db.execute('select title, text from entries order by id desc')
+    # entries = cur.fetchall()
+    desg_json = get_as_json(cur)
+    return render_template('desg_area_summ.html', entries=desg_json,condition=request.form['d5'] )
+
+
 
 def get_as_json(cursor):
+    return json.dumps(get_as_dict(cursor))
+
+def get_as_dict(cursor):
     rows = [x for x in cursor]
     cols = [x[0] for x in cursor.description]
     ls = []
@@ -75,7 +112,7 @@ def get_as_json(cursor):
         for prop, val in zip(cols, row):
             item[prop] = val
         ls.append(item)
-    return json.dumps(ls)
+    return ls
 
 @app.route('/filter', methods=['POST'])
 def show_entries_filter():
@@ -116,7 +153,7 @@ def show_entries_filter():
 
         cur = db.execute(qs.get_sanc_filter_footer(filter=qfilter))
         # cur = db.execute('select title, text from entries order by id desc')
-        footer = cur.fetchall()
+        footer = get_as_dict(cur)[0]
 
     except sqlite3.OperationalError as e:
         raise e
@@ -153,7 +190,7 @@ def login():
         else:
             session['logged_in'] = True
             flash('You were logged in')
-            return redirect(url_for('show_entries'))
+            return redirect(url_for('show_desg_summ'))
     return render_template('login.html', error=error)
 
 
@@ -161,7 +198,7 @@ def login():
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
-    return redirect(url_for('show_entries'))
+    return redirect(url_for('show_desg_summ'))
 
 # @app.route('/')
 # def index():

@@ -1,0 +1,149 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<link href="{{ url_for('static', filename='semantic/semantic.min.css') }}" rel="stylesheet" type="text/css" />
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.1/css/tabulator.min.css" rel="stylesheet">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.1/css/semantic-ui/tabulator_semantic-ui.min.css" rel="stylesheet">
+
+
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.1/js/tabulator.min.js"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.js"></script>
+
+
+<!-- <script src="{{ url_for('static', filename='semantic/semantic.min.js') }}"></script> -->
+{% if session.logged_in %}
+<form action="{{ url_for('show_entries_filter') }}" method=post>
+    <dl>
+        <div class="ui fluid focus action input">
+            <input type="text" name="filter" placeholder="Search..." value='{{ qfilter|safe }}'>
+            <button class="ui button" type=submit>Search</button>
+        </div>
+        <!-- <dd><input type=submit value=Share> -->
+    </dl>
+</form>
+{% endif %}
+<div><h2>{{ condition }} - Area-Unit Summary</h2> <h4>Ext: Req: San: </h4></div>
+<div id="example-table"></div>
+<script type="text/javascript">
+    //define some sample data
+var tabledata = {{ entries|safe }};
+var id_table = {}
+//create Tabulator on DOM element with id "example-table"
+$("#example-table").tabulator({
+    height: 600, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+    groupToggleElement: "header",
+    layout: "fitColumns", //fit columns to width of table (optional)
+    columns: [ //Define Table Columns
+        
+        // { title: "name", field: "name", headerFilter:true,}, //formatter:d5_linker 
+        { title: "area", field: "area" , headerFilter:true,  formatter:area_linker},
+        { title: "unit", field: "unit" , headerFilter:true,formatter:unit_linker},
+        { title: "name", field: "name" , headerFilter:true},
+        { title: "d5", field: "d5" , headerFilter:true},
+        { title: "gdesig", field: "gdesig" , headerFilter:true},
+        { title: "dscd", field: "dscd" , headerFilter:true},
+        { title: "desig", field: "desig" , headerFilter:true},
+        //{ title: "grade", field: "grade" },
+        { title: "tot", field: "tot", topCalc: "sum", },
+        { title: "req", field: "req", topCalc: "sum" ,},
+        { title: "san", field: "san", topCalc: "sum",color:"green" },
+           ],
+    // persistenceID: "example3", //id string, can only be numbers, letters, hyphens and underscores.
+    // persistentLayout: true,
+    movableColumns: true,
+    // movableRows: true, 
+    groupBy: ["area"],
+    groupClosedShowCalcs: true,
+    groupHeader: [
+        function(value, count, data) { //generate header contents for color groups
+            return value + "<span style='margin-left:10px;'>(" + count + " item)</span>";
+        }
+    ],
+    // rowClick:function(e, row){ //trigger an alert message when the row is clicked
+    //     alert("Row " + row.getData().id + " Clicked!!!!");
+    // },
+});
+function area_linker(cell, formatterParams){
+        //cell - the cell component
+        //formatterParams - parameters set for the column
+        var data = cell.getData()
+        id_table[data.dscd] = data
+        var area = '<a href="javascript:show_area_entries(\''+data.area+'\')">'+cell.getValue()+'</a>'
+        return  area
+    }
+function unit_linker(cell, formatterParams){
+        //cell - the cell component
+        //formatterParams - parameters set for the column
+        var data = cell.getData()
+        id_table[data.dscd] = data
+        var unit = '<a href="javascript:show_unit_entries(\''+data.unit+'\')">'+cell.getValue()+'</a>'
+        return  unit
+    }
+//var link_url ={{ url_for('show_entries_filter') }}
+var condition = "{{condition}}"
+function show_area_entries(area){
+    var filter =  "dscd like \"%"+condition+"%\" and area= \""+area+"\""
+    var url = '/filter'
+    var form = $('<form action="' + url + '" method="post">' +
+  '<input type="text" id="redirect_url_cond" name="filter" value="" />' +
+  '</form>');
+$('body').append(form);
+$('#redirect_url_cond')[0].value=filter
+form.submit();
+   }
+function show_unit_entries(unit){
+    var filter =  "dscd like \"%"+condition+"%\" and unit= \""+unit+"\""
+    var url = '/filter'
+    var form = $('<form action="' + url + '" method="post">' +
+  '<input type="text" id="redirect_url_cond" name="filter" value="" />' +
+  '</form>');
+$('body').append(form);
+$('#redirect_url_cond')[0].value=filter
+form.submit();
+   }
+function load_desg_area(id_desg){
+    var filter =  id_desg
+    var data = id_table[id_desg]
+    var url = '/filter'
+    var form = $('<form action="' + url + '" method="post">' +
+  '<input type="text" id="redirect_url_cond" name="d5" value="" />' +
+  '</form>');
+$('body').append(form);
+$('#redirect_url_cond')[0].value=filter
+form.submit();
+   }
+
+ $("#add-row").on("click", function(e) {
+            $('.ui.modal').modal('show')
+        });
+    $('.cancel').on("click", function(e) {
+        $('.ui.modal').modal('hide')
+    })
+
+
+if (condition.length===5){
+    $("#example-table").tabulator("hideColumn","dscd")
+    $("#example-table").tabulator("hideColumn","desig")
+}
+if (condition.length===7){
+    $("#example-table").tabulator("hideColumn","d5")
+    $("#example-table").tabulator("hideColumn","gdesig")
+}
+
+
+//load sample data into the table
+$("#example-table").tabulator("setData", tabledata);
+
+
+</script>
+{% endblock %}

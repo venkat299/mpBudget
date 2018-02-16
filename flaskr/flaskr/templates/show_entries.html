@@ -8,6 +8,7 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.1/css/semantic-ui/tabulator_semantic-ui.min.css" rel="stylesheet">
 
+
 <script
         src="https://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -31,9 +32,37 @@
     </dl>
 </form>
 {% endif %}
+
+<a><h2>Edit Page - Sanc</h2> </a>
+<div class="ui mini statistics">
+  <div class="ui mini statistic">
+    <div class="value">
+      {{footer.tot}}
+    </div>
+    <div class="label">
+      Ext
+    </div>
+  </div>
+  <div class="ui mini statistic">
+    <div class="value">
+      {{footer.req}}
+    </div>
+    <div class="label">
+      Req
+    </div>
+  </div>
+  <div class="ui mini statistic">
+    <div class="value">
+      {{footer.san}}
+    </div>
+    <div class="label">
+      San
+    </div>
+  </div>
+</div>
  <div class="ui small inverted modal">
         <div class="ui icon header">
-            <i class="archive icon"></i> Enter Avg Price
+            <i class="archive icon"></i> Add Entry
         </div>
         <div class="content">
             <div id="dialog" title="Dialog Form">
@@ -100,19 +129,29 @@ $("#example-table").tabulator({
         { title: "name", field: "name" },
         { title: "discp", field: "discp" },
         { title: "d5", field: "d5" },
+        // { title: "cadre", field: "cadre" },
         { title: "dscd", field: "dscd" },
         { title: "desig", field: "desig" },
-        { title: "grade", field: "grade" },
+        { title: "grade", field: "grade" ,formatter:function(cell, formatterParams){
+       var value = cell.getValue();
+       console.log(cell.getData())
+       var cadre = cell.getData().CADRE
+        if(cadre==='XCD'){
+            return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
+        }else{
+            return value;
+        }
+    }},
         { title: "tot", field: "tot", topCalc: "sum", },
         { title: "req", field: "req", topCalc: "sum", editor: "number" ,},
         { title: "san", field: "san", topCalc: "sum", editor: "number",color:"green" },
         { title: "remark", field: "remark", editor: "input",color:"green" },
     ],
-    persistenceID: "example1", //id string, can only be numbers, letters, hyphens and underscores.
-    persistentLayout: true,
+    // persistenceID: "example1", //id string, can only be numbers, letters, hyphens and underscores.
+    // persistentLayout: true,
     movableColumns: true,
     // movableRows: true, 
-    groupBy: ["area", "unit"],
+    groupBy: ["area", "unit","d5"],
     groupClosedShowCalcs: true,
     groupHeader: [
         function(value, count, data) { //generate header contents for color groups
@@ -169,24 +208,7 @@ $("#example-table").tabulator({
             },
             error:function() { alert("error occurred while updating "); }
         });
-
-         
-        // $.get("/harvest/strategy/confirm_order/" + uuid + "/" + avg_price + "/",
-        //     function(data) {
-        //         console.log("Data Loaded: ", data);
-        //         if (data.success === true) {
-        //             $('.ui.modal').modal('hide')
-        //             $('#' + uuid).parent().parent().children()[5].textContent = avg_price
-        //             $('#' + uuid).parent().parent().children()[2].textContent = 'COMPLETE'
-        //         } else {
-        //             alert(data.msg)
-        //         }
-        //     });
     });
-//Add row on "Add Row" button click
-// $("#add-row").click(function(){
-//     $("#example-table").tabulator("addRow", {});
-// });
 
 $('.dscd_drop').dropdown({
     values: dscd_data
