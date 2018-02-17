@@ -113,22 +113,26 @@ function unit_linker(cell, formatterParams){
 function show_area_entries(area){
     var filter =  "area= \""+area+"\""
     var url = '/filter'
-    var form = $('<form action="' + url + '" method="post">' +
+    $('#redirect_form').remove()
+    var form = $('<form hidden id="redirect_form" action="' + url + '" method="post">' +
   '<input type="text" id="redirect_url_cond" name="filter" value="" />' +
   '</form>');
 $('body').append(form);
 $('#redirect_url_cond')[0].value=filter
 form.submit();
+$('#redirect_form').remove()
    }
 function show_unit_entries(unit){
     var filter =  " unit= \""+unit+"\""
     var url = '/filter'
-    var form = $('<form action="' + url + '" method="post">' +
+    $('#redirect_form').remove()
+    var form = $('<form hidden id="redirect_form" action="' + url + '" method="post">' +
   '<input type="text" id="redirect_url_cond" name="filter" value="" />' +
   '</form>');
 $('body').append(form);
 $('#redirect_url_cond')[0].value=filter
 form.submit();
+$('#redirect_form').remove()
    }
  $("#add-row").on("click", function(e) {
             $('.ui.modal').modal('show')

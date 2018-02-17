@@ -120,23 +120,27 @@ function DoPost(id_desg){
     var filter =  "d5=\""+id_desg+"\""
     var data = id_table[id_desg]
     var url = '/filter'
-    var form = $('<form action="' + url + '" method="post">' +
+    $('#redirect_form').remove()
+    var form = $('<form hidden id="redirect_form" action="' + url + '" method="post">' +
   '<input type="text" id="redirect_url_cond" name="filter" value="" />' +
   '</form>');
 $('body').append(form);
 $('#redirect_url_cond')[0].value=filter
 form.submit();
+$('#redirect_form').remove()
    }
 function load_desg_area(id_desg){
     var filter =  id_desg
     var data = id_table[id_desg]
     var url = '/desg_area'
-    var form = $('<form action="' + url + '" method="post">' +
+    $('#redirect_form').remove()
+    var form = $('<form hidden id="redirect_form" action="' + url + '" method="post">' +
   '<input type="text" id="redirect_url_cond" name="d5" value="" />' +
   '</form>');
 $('body').append(form);
 $('#redirect_url_cond')[0].value=filter
 form.submit();
+$('#redirect_form').remove()
    }
 
  $("#add-row").on("click", function(e) {
