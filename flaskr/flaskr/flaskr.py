@@ -10,10 +10,10 @@ import flaskr.query_list as qs
 
 app = Flask(__name__) # create the application instance :)
 app.config.from_object(__name__) # load config from this file , flaskr.py
-
+DB_PATH = '/Users/venkat299/work/MPB_18_19/mpb_18-19.db'
 # Load default config and override config from an environment variable
 app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, '/Users/venkat299/work/MPB_18_19/mpb_18-19.db'),
+    DATABASE=os.path.join(app.root_path, DB_PATH),
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='default'
