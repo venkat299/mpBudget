@@ -154,7 +154,16 @@ def read_file(xls_path, sheet_name, upload):
 			for idx, r in enumerate(filtered_rec):
 				# unit, dscd, req, sanc remark
 				#sno	AREA	UNIT	MINE_TYPE	ONROLL_UNIT	WORKING UNIT	SECTION_TYPE	CADRE	SECTION	SECTION_CD	DESIG	DSCD	EIS	NAME	GENDER	DOB	Comments
-				ls.append((unit_code, r['DSCD'],r['AREA REQT 18-19'],r['SANC 18-19'],r['COMMENTS, IF ANY']))
+				
+				req_val =r['AREA REQT 18-19']
+				san_val =r['SANC 18-19']
+
+				if req_val == '' or req_val == "" or req_val is None:
+					req_val= 0
+				if san_val == '' or san_val == "" or san_val is None:
+					san_val= 0
+				# print(req_val, san_val)
+				ls.append((unit_code, r['DSCD'],req_val,san_val,r['COMMENTS, IF ANY']))
 			c = conn.cursor()
 			#print(ls)
 			c.execute('delete from sanc where unit = ?',(unit_code,))
