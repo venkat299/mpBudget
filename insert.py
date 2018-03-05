@@ -131,6 +131,43 @@ def read_file(xls_path, sheet_name, upload, ignore_multi_unit):
 			conn.commit()
 			print('--->{0} records inserted sucessfully'.format(len(ls)))
 
+def upload_desg(xls_path, sheet_name, upload, ignore_multi_unit):
+	try:
+		sheet = pe.get_sheet(file_name=os.path.normpath(xls_path), sheet_name=sheet_name, name_columns_by_row=0)
+
+	except ValueError as e:
+		print("Sheet name not in excel file: {0}".format(e))
+		sys.exit()
+	except AttributeError as e:
+		print("Sheet name not in excel file: {0}".format(e))
+		sys.exit()
+		#raise e
+	except NotImplementedError as e:
+		print("File not found or File not in proper format: {0}".format(e))
+		sys.exit()
+		#raise e
+
+	records = sheet.get_records()
+	error_ls = []
+
+	if error_ls:
+		print('correct the above errors and upload')
+	else:
+		print('{0} rows will be inserted. add "-u" to upload'.format(len(records)))
+		if upload:
+			ls=[]
+			for idx, r in enumerate(records):
+				#sno	AREA	UNIT	MINE_TYPE	ONROLL_UNIT	WORKING UNIT	SECTION_TYPE	CADRE	SECTION	SECTION_CD	DESIG	DSCD	EIS	NAME	GENDER	DOB	Comments
+				#cadre	gcd	dscd	desig	discp	grade	gdesig	promo
+				print(r)
+				ls.append((r['cadre'],r['gcd'],r['dscd'],r['desig'],r['discp'],r['grade'],r['gdesig'],r['promo']))
+			c = conn.cursor()
+			c.execute('delete from desg')
+			c.executemany('''insert into desg
+				values(?,?,?,?,?,?,?,?)''',ls)
+			conn.commit()
+			print('--->{0} records inserted sucessfully'.format(len(ls)))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -154,6 +191,8 @@ if __name__ == '__main__':
     elif args.table == 's':
         insert_sanc.load_tables()
         insert_sanc.read_file(args.filename, args.sheetname, args.upload)
+    if args.table == 'd':
+        upload_desg(args.filename, args.sheetname, args.upload, args.ignore_multi_unit)
     else:
     	print('supplied argument is wrong or the order of argument is wrong')
     	sys.exit()
