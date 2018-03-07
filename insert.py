@@ -191,7 +191,7 @@ if __name__ == '__main__':
     elif args.table == 's':
         insert_sanc.load_tables()
         insert_sanc.read_file(args.filename, args.sheetname, args.upload)
-    if args.table == 'd':
+    elif args.table == 'd':
         upload_desg(args.filename, args.sheetname, args.upload, args.ignore_multi_unit)
     else:
     	print('supplied argument is wrong or the order of argument is wrong')
